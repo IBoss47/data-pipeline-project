@@ -1,4 +1,4 @@
-cd ~/streamify/eventsim
+cd ~/eventsim
 
 echo "Building Eventsim Image..."
 docker build -t events:1.0 .

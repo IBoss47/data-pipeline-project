@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "server": "http://localhost",
+            "port": 8123,
+            "database": "default",
+            "useJWT": false,
+            "requestTimeout": 30000,
+            "enableTls": false,
+            "previewLimit": 50,
+            "username": "default",
+            "driver": "ClickHouse",
+            "name": "local-database",
+            "password": ""
+        }
+    ]
+}

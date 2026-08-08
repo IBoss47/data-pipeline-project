@@ -46,8 +46,9 @@ class PyArrowSchemaGenerator:
         "Float64": pa.float64(),
         "String": pa.string(),
         "Date": pa.date32(),
-        "DateTime": pa.timestamp("s"),
-        "Boolean": pa.bool_()
+        "DateTime": pa.timestamp("ms", tz="UTC"),
+        "Boolean": pa.bool_(),
+        "Bool": pa.bool_()
     }
 
     def generate(self, config):

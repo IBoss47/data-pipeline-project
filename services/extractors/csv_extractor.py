@@ -13,6 +13,7 @@ class CSVExtractor:
 
         df = pd.read_csv(
             config["source"]["path"],
-            parse_dates=parse_dates
+            parse_dates=parse_dates,
+            escapechar='\\'
         )
         return df

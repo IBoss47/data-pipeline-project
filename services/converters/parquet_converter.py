@@ -24,8 +24,9 @@ class ParquetConverter:
                 csv_bytes = csv_obj.get()["Body"].read()
 
                 schema = PyArrowSchemaGenerator().generate(config = config)
-                convert_options = pcsv.ConvertOptions(column_types = schema)
-                table = pcsv.read_csv(BytesIO(csv_bytes), convert_options=convert_options)
+                convert_options = pcsv.ConvertOptions(column_types = schema, strings_can_be_null=True)
+                parse_options = pcsv.ParseOptions(escape_char='\\')
+                table = pcsv.read_csv(BytesIO(csv_bytes), convert_options=convert_options, parse_options=parse_options)
 
 
                 parquet_buffer = BytesIO()

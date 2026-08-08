@@ -1,0 +1,72 @@
+version: 2
+
+models:
+  - name: stg_streamify__auth_events
+    description: "Staging model for authentication events (login, logout, etc.)"
+    columns:
+      - name: session_id
+        description: "The unique identifier for the user's session."
+        tests:
+          - not_null
+      - name: time_stamp
+        description: "The exact timestamp when the event occurred."
+        tests:
+          - not_null
+      - name: level
+        description: "The subscription level of the user (free or paid)."
+        tests:
+          - accepted_values:
+              values: ['free', 'paid']
+      - name: gender
+        description: "The gender of the user."
+        tests:
+          - accepted_values:
+              values: ['female', 'male']
+      - name: success
+        description: "Indicates whether the authentication was successful."
+        tests:
+          - not_null
+
+  - name: stg_streamify__listen_events
+    description: "Staging model for song listen events."
+    columns:
+      - name: session_id
+        tests:
+          - not_null
+      - name: time_stamp
+        tests:
+          - not_null
+      - name: user_id
+        description: "The unique identifier for the user."
+        tests:
+          - not_null
+      - name: level
+        tests:
+          - accepted_values:
+              values: ['free', 'paid']
+      - name: gender
+        tests:
+          - accepted_values:
+              values: ['female', 'male']
+
+  - name: stg_streamify__page_view_events
+    description: "Staging model for general page view events."
+    columns:
+      - name: session_id
+        tests:
+          - not_null
+      - name: time_stamp
+        tests:
+          - not_null
+      - name: level
+        tests:
+          - accepted_values:
+              values: ['free', 'paid']
+      - name: gender
+        tests:
+          - accepted_values:
+              values: ['female', 'male']
+      - name: status
+        description: "HTTP status code of the page view."
+        tests:
+          - not_null

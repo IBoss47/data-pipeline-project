@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: stg_streamify
+    description: This's sources file for stagging layer to reference which table should be use.
+    database: streamify_databases
+    tables:
+      - name: raw_listen_events
+      - name: raw_auth_events
+      - name: raw_page_view_events

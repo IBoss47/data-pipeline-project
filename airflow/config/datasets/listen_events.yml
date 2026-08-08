@@ -1,0 +1,53 @@
+name: listen_events
+
+source:
+  type: csv
+  path: /opt/data/listen_events.csv
+
+target:
+  database: streamify_databases
+  table: raw_listen_events
+  engine: MergeTree
+  order_by:
+    - userId
+  partition_by: null
+
+storage:
+  provider: minio
+  bucket: ecom
+  layer: raw
+  folder: listen_events
+  format: csv
+
+column_types:
+  artist: String
+  song: String
+  duration: Float64
+  ts: DateTime
+  sessionid: Float64
+  auth: String
+  level: String
+  itemInSession: UInt64
+  city: String
+  zip: Float64
+  state: String 
+  userAgent: String
+  lon: Float64
+  lat: Float64
+  userId: UInt64
+  lastName: String
+  firstName: String
+  gender: String
+  registration: Float64
+  year: UInt64
+  month: UInt64
+  hour: UInt64
+  day: UInt64
+
+
+nullable:
+  zip: true
+  sessionid: true
+
+primary_key:
+  - userId

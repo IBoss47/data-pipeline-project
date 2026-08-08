@@ -1,0 +1,54 @@
+name: auth_events
+
+source:
+  type: csv
+  path: /opt/data/auth_events.csv
+
+target:
+  database: streamify_databases
+  table: raw_auth_events
+  engine: MergeTree
+  order_by:
+    - sessionId
+  partition_by: null
+
+storage:
+  provider: minio
+  bucket: ecom
+  layer: raw
+  folder: auth_events
+  format: csv
+
+column_types:
+  ts: DateTime
+  sessionId: UInt64
+  level: String
+  itemInSession: UInt64
+  city: String
+  zip: Float64
+  state: String 
+  userAgent: String
+  lon: Float64
+  lat: Float64
+  userId: Float64
+  lastName: String
+  firstName: String
+  gender: String
+  registration: Float64
+  success: Bool
+  year: UInt64
+  month: UInt64
+  hour: UInt64
+  day: UInt64
+
+
+nullable:
+  zip: true
+  userId: true
+  lastName: true
+  firstName: true
+  gender: true
+  registration: true
+
+primary_key:
+  - sessionId

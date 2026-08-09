@@ -4,7 +4,7 @@ with rename as (
         lower(trim(song)) as song,
         duration,
         ts as time_stamp,
-        cast(sessionid as UInt64) as session_id,
+        cast(sessionid as Nullable(UInt64)) as session_id,
         lower(trim(auth)) as auth,
         lower(trim(level)) as level,
         itemInSession as items_in_session,

@@ -30,9 +30,6 @@ models:
   - name: stg_streamify__listen_events
     description: "Staging model for song listen events."
     columns:
-      - name: session_id
-        tests:
-          - not_null
       - name: time_stamp
         tests:
           - not_null

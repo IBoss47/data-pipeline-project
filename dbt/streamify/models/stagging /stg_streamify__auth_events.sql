@@ -1,7 +1,7 @@
 with rename as (
     select 
         ts as time_stamp,
-        sessionId as session_id,
+        cast(sessionId as UInt64) as session_id,
         lower(trim(level)) as level,
         itemInSession as items_in_session,
         lower(trim(city)) as city,
@@ -10,7 +10,7 @@ with rename as (
         lower(trim(userAgent)) as user_agent,
         lon,
         lat,
-        cast(userId as UInt64) as user_id,
+        cast(userId as Nullable(UInt64)) as user_id,
         lower(trim(lastName)) as last_name,
         lower(trim(firstName)) as first_name,
         case

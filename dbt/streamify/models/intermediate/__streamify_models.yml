@@ -1,0 +1,15 @@
+version: 2
+
+models:
+  - name: int_streamify__listen_events
+    description: "Intermediate model for streamify platform to prepare data before marts layer."
+    columns:
+      - name: song_id
+        description: "Unique key for song, that generated from song + artist with MD5 format."
+        tests:
+          - not_null
+      
+      - name: event_id
+        description: "Unique key for event, that occured in row (MD5 format)."
+        tests:
+          - not_null

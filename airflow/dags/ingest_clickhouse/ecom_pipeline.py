@@ -47,7 +47,7 @@ def ecom_pipeline():
         task_id="dbt_build",
         bash_command="""
         dbt run \
-        --project-dir /opt/dbt/ecom \
+        --project-dir /opt/dbt/streamify \
         --profiles-dir /opt/dbt/profiles \
         --target docker
         """,
@@ -57,7 +57,7 @@ def ecom_pipeline():
         task_id="dbt_test",
         bash_command="""
         dbt test \
-        --project-dir /opt/dbt/ecom \
+        --project-dir /opt/dbt/streamify \
         --profiles-dir /opt/dbt/profiles \
         --target docker
         """,

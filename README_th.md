@@ -15,6 +15,25 @@
 
 ![System Architecture](stack.png)
 
+## Pipeline Workflow
+
+```mermaid
+flowchart LR
+    Airflow[Airflow DAGs] --> Services[Python Services]
+    
+    subgraph dbt [dbt Transformation]
+        direction LR
+        STG[Staging] --> INT[Intermediate]
+        INT --> CORE[Fact & Dim]
+        CORE --> MARTS[Marts]
+    end
+    
+    Services --> STG
+
+    style Airflow fill:#e8f4f8,stroke:#017cee,stroke-width:2px,color:#000
+    style Services fill:#f0f5f9,stroke:#306998,stroke-width:2px,color:#000
+    style dbt fill:#fff0ed,stroke:#ff694b,stroke-width:2px,color:#000
+```
 ---
 
 ## Project Structure (โครงสร้างโปรเจค)
@@ -49,3 +68,16 @@
 โฟลเดอร์สำหรับจัดการ Workflow และตั้งเวลาการทำงาน (Scheduling) ของ Data Pipeline
 - **`dags/`**: โฟลเดอร์สำหรับเก็บไฟล์ DAG (Directed Acyclic Graph) ซึ่งใช้กำหนดลำดับขั้นตอนการทำงานของ Pipeline เช่น สั่งรัน Python Script เพื่อนำเข้าข้อมูล แล้วตามด้วยการสั่ง `dbt run`
 - **`config/datasets/`**: จัดเก็บไฟล์การตั้งค่า (Config/Metadata) ที่เกี่ยวข้องกับชุดข้อมูล เพื่อให้ Airflow สามารถอ้างอิงและจัดการข้อมูลได้อย่างเป็นระบบ
+
+---
+
+## การจำลองสถานการณ์ทางธุรกิจ (Business Scenario Simulation)
+
+เนื่องจากโปรเจคนี้จัดทำขึ้นเพื่อฝึกฝนการสร้าง Data Pipeline และพัฒนาทักษะในสายงาน Data Engineer แต่ในโลกของการทำงานจริงนั้น Data Engineer จำเป็นต้องมีการสื่อสารและทำงานร่วมกับหลายฝ่าย เช่น Data Owner, Business Analyst (BA), Data Scientist และผู้บริหาร
+
+ดังนั้น เพื่อให้เห็นภาพการทำงานที่ใกล้เคียงกับความเป็นจริงมากที่สุด ผมจึงได้ทำการ Prompt AI เพื่อจำลองบทบาท (Roles) ต่างๆ ที่เกี่ยวข้อง ดังนี้:
+- **Data Source Owner**
+- **Business Analyst (BA)**
+- **CEO**
+
+สามารถดูรายละเอียดคำถามทางธุรกิจ (Business Questions) ที่ได้จากการจำลองสถานการณ์นี้ได้ที่: <strong><a href="dbt/streamify/models/bussiness_question.md">Business Questions</a></strong>

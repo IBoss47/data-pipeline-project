@@ -2,12 +2,11 @@
 
 ## 1. Fact_Listen (ข้อมูลพฤติกรรมการฟังเพลง)
 **ข้อมูลหลัก:** `listen_events.csv`
+- **Fact Table:** `fact_listen_events` *(เก็บข้อมูลระดับ 1 row = 1 song played)*
+- **Dimensions:** `dim_date`, `dim_users`, `dim_content`, `dim_state`
 
 ### Business Question 1
 > *"ในแต่ละเดือน ผู้ใช้งานกลุ่ม Paid และ Free มีระยะเวลาการฟังเพลงรวม (Total Listening Hours) และจำนวนครั้งที่ฟังเพลง (Total Play Counts) ของแต่ละศิลปิน (Artist) แตกต่างกันอย่างไร?"*
-
-- **Fact Table:** `fact_listen_events` *(เก็บข้อมูลระดับ 1 row = 1 song played)*
-- **Dimensions:** `dim_date`, `dim_users`, `dim_content`
 
 ### Business Question 1.1 (มุมมอง CEO ด้านคุณภาพคอนเทนต์และการลงทุน)
 > *"ศิลปิน (Artist) หรือเพลง (Song) ใดที่มีสัดส่วนการฟังเพลง (Duration Rate) สูงที่สุด และมีการกดข้ามเพลง (Skip Rate) ต่ำที่สุด? ข้อมูลนี้จะช่วยในการตัดสินใจซื้อลิขสิทธิ์เพลงหรือการโปรโมตศิลปิน"*
@@ -18,15 +17,4 @@
 ### Business Question 1.3 (มุมมอง CEO ด้านกลยุทธ์ผลิตภัณฑ์)
 > *"ผู้ใช้งานกลุ่มที่เปลี่ยนมาเป็นแบบจ่ายเงิน (Paid) มีพฤติกรรมการฟังเพลงที่หลากหลายขึ้นหรือไม่ (เช่น ฟังศิลปินหรือแนวเพลงใหม่ๆ มากขึ้น) เมื่อเทียบกับตอนใช้ฟรี? เพื่อนำไปพัฒนาฟีเจอร์ แนะนำเพลง (Personalized Recommendation) ที่กระตุ้นยอด Subscription"*
 
-## 2. Fact_Auth (ข้อมูลการเข้าสู่ระบบและสถานะผู้ใช้งาน)
-**ข้อมูลหลัก:** `auth_events.csv`
 
-### Business Question 2 (มุมมอง CEO ด้านการเติบโต)
-> *"อัตราการเปลี่ยนสถานะผู้ใช้งานจากแบบฟรีเป็นแบบเสียเงิน (Free-to-Paid Conversion Rate) มีแนวโน้มเป็นอย่างไรในแต่ละเดือน? และมีผู้ใช้งานที่ Active (DAU/MAU) เติบโตขึ้นตามเป้าหมายของธุรกิจหรือไม่?"*
-
-
-## 3. Fact_Page_View (ข้อมูลปฏิสัมพันธ์ของหน้าแอปพลิเคชัน)
-**ข้อมูลหลัก:** `page_view_events.csv`
-
-### Business Question 3 (มุมมอง CEO ด้าน User Experience)
-> *"ช่องทางหรือหน้าแอปพลิเคชันใด (เช่น Home, Search, Library) ที่สร้าง Engagement และนำไปสู่การกดฟังเพลงมากที่สุด? เราควรปรับปรุง User Experience อย่างไรเพื่อลดอัตราการออกจากแอป (Drop-off)?"*

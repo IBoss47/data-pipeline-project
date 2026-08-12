@@ -37,8 +37,6 @@ def ecom_pipeline():
         @task(task_id = f"load_{dataset}")
         def load_datasets(dataset_name: str, ds = None):
 
-            
-           
             run_pipeline(dataset = dataset_name)
 
         load_tasks.append(load_datasets(dataset))

@@ -7,7 +7,7 @@ with listen_events as (
 dedup as (
     select 
         user_id,
-        level,
+        current_level,
         full_name,
         gender,
         city,
@@ -23,7 +23,7 @@ dedup as (
 
 select distinct
     user_id,
-    level,
+    current_level,
     full_name,
     gender,
     city,

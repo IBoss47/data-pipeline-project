@@ -17,7 +17,7 @@ rank_users as (
             partition by user_id 
             order by time_stamp desc
         ) as rn
-    from {{ref('stg_streamify__listen_events')}}
+    from listen_events
     where user_id is not null
      
 ),
@@ -26,6 +26,14 @@ users as (
         *
     from rank_users
     where rn = 1
+),
+user_levels as (
+    select 
+        user_id,
+        count(distinct level) as count_level,
+        groupArray(distinct level) as levels
+    from listen_events
+    group by user_id
 )
 
 select
@@ -33,7 +41,10 @@ select
     l.user_id as user_id,
     concat(l.first_name, ' ', l.last_name) as full_name,
     l.gender as gender,
-    l.level as level,
+    l.level as level_on_event,
+    u.level as current_level,
+    ul.count_level,
+    ul.levels,
     l.city as city,
     l.state as state,
     l.zip as zip,
@@ -58,7 +69,7 @@ select
     end as is_valid_play
 
 from listen_events l
-left join users u
-using (user_id)
+left join users u using (user_id)
+left join user_levels ul using(user_id)
 where artist is not null 
     and song is not null

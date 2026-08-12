@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: mart_content_performance_metrics
+    description: "sdfw"
+    columns:
+      - name: song_id
+        description: "asdf"
+        tests:
+          - unique 
+          - not_null
+
+  - name: mart_level_listening_volume
+    description: "adf"
+    columns:
+      - name: user_id
+        description: "asdf"
+        tests:
+          - unique 
+          - not_null
+
+  - name: mart_listening_volume_by_region_and_day
+    description: "adf"
+    columns:
+      - name: region 
+        description: "asdf"
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['South', 'West', 'Midwest', 'Northeast']
+
+  - name: mart_total_duration_play_count_for_each_user_type
+    description: "adf"
+    columns:
+      - name: current_level
+        description: "asdf"
+        tests:
+          - unique 
+          - not_null

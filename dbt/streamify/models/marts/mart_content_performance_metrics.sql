@@ -9,7 +9,7 @@ dim_contents as (
 )
 
 select top 10
-    fl.song_id,
+    fl.song_id as song_id,
     concat(
         dc.song_name, ' (', dc.artist_name, ')'
     ) as content,

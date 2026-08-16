@@ -20,7 +20,7 @@ for dataset_file in DATASET_PATH.glob("*.yml"):
     assets.append(asset)
 
 @dag(
-    dag_id="ecom_pipeline",
+    dag_id="streamify_pipeline",
     start_date=datetime(2024, 1, 1),
     schedule= AssetAll(*assets),
     catchup=False,

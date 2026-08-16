@@ -7,7 +7,7 @@ from services.pipeline.run_minio_loader import run_minio_loader
 DATASET_PATH = Path("/opt/airflow/config/datasets")
 
 @dag(
-    dag_id = 'ecom_ingest_minio',
+    dag_id = 'streamify_ingest_minio',
     start_date=datetime(2024, 1, 1),
     schedule="@daily",
     catchup=False

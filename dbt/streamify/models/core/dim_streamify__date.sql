@@ -1,6 +1,6 @@
 with date_temp as (
     select 
-        toDate('2026-07-01') + number as date_day
+        toDate('2025-01-01') + number as date_day
     from numbers(3650)
 )
 

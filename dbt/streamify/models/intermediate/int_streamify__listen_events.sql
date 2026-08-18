@@ -59,6 +59,7 @@ select
     -- events
     hex(MD5(concat(coalesce(toString(l.user_id), 'guest'), '-', toString(l.time_stamp)))) as event_id,
     l.time_stamp as time_stamp,
+    toDate(time_stamp) as date_day,
     l.day as day,
     l.month as month,
     l.year as year,

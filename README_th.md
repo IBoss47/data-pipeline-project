@@ -8,8 +8,7 @@
 
 > **หมายเหตุ:** 
 > * โครงสร้างของ Project นี้ได้มีการ Clone มาจาก Github Repo ที่เป็น Structure ที่ผมได้เคยทำไว้ และนำมาปรับและต่อยอดจากของเดิม
-> * ข้อมูลที่ใช้ใน Project นี้เป็นข้อมูลจาก **[Streamify](https://github.com/ankurchavda/ 
-)** ซึ่งจะดึงข้อมูลจำลองมา ณ ช่วงเวลาใดเวลานึงเพียงเท่านั้น และจะถูกจัดเก็บใน `data/`
+> * ข้อมูลที่ใช้ใน Project นี้เป็นข้อมูลจาก **[Streamify](https://github.com/ankurchavda/streamify)** ซึ่งจะดึงข้อมูลจำลองมา ณ ช่วงเวลาใดเวลานึงเพียงเท่านั้น และจะถูกจัดเก็บใน `data/`
 
 ## System Architecture
 
@@ -81,3 +80,28 @@ flowchart LR
 - **CEO**
 
 สามารถดูรายละเอียดคำถามทางธุรกิจ (Business Questions) ที่ได้จากการจำลองสถานการณ์นี้ได้ที่: <strong><a href="dbt/streamify/models/bussiness_question.md">Business Questions</a></strong>
+___
+
+## บทสรุปและสิ่งที่ได้เรียนรู้
+
+![Dashboard](dashboard.png)
+**ลิงก์ Dashboard:** [Streamify Dashboard](https://datastudio.google.com/reporting/107e96a5-47d7-406b-bc8d-01d3cba74cc9)
+
+### สิ่งที่ได้เรียนรู้จากโปรเจคนี้
+- ได้เรียนรู้การรับมือกับข้อมูล
+- ได้เรียนรู้ว่าถ้าเราต้องการสร้าง dimension แต่ข้อมูลต้นทางไม่มี primary key สำหรับ dimension นั้น ๆ เราสามารถสร้าง key ด้วยการ hash ได้
+- เรียนรู้การเชื่อมโยงของ Data modeling layer ต่าง ๆ ว่ามีหน้าที่อะไรสอดคล้องกันยังไง
+- จากโครงสร้าง Project ที่ผมทำ ผมได้เรียนรู้ว่าควรจะแบ่งการทำงานออกจากกันให้ชัดเจน ตัวอย่างเช่น การแยก folder `airflow`, `dbt`, `services` ออกจากกัน และให้ airflow ทำหน้าที่เป็น Orchestrator เต็มรูปแบบ
+- ได้รู้จักการทำ `metadata` เบื้องต้น
+- ได้เรียนรู้การเก็บข้อมูลใน Minio เพิ่มเติม
+- ได้เรียนรู้การใช้ SQL เช่น CTE, Aggregate function, subquery ได้มากกว่าการฟังคลิปสอน
+- ได้เรียนรู้การเขียน Generic test, Singular test
+
+### แนวทางการพัฒนาต่อยอด
+- เชื่อมการส่งข้อมูลด้วย Kafka เหมือนกับที่ Project **[Streamify](https://github.com/ankurchavda/streamify)** ต้นแบบทำ
+- เพิ่มการใช้ PySpark ในการทำ layer ก่อนเข้า dbt 
+- ลองเรียนรู้การทำ snapshot และการทำตารางแบบ incremental
+
+### สิ่งที่จะทำแตกต่างไปหากเริ่มทำโปรเจคนี้ใหม่
+- ทดลองกับข้อมูลที่หลากหลายขึ้น ไม่ใช่แค่การจำลองข้อมูลในรูปแบบการฟังเพลงเท่านั้น
+- เปลี่ยน Business เพื่อเพิ่มความหลากหลายในการ query

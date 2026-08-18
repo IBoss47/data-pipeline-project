@@ -1,39 +1,56 @@
 version: 2
 
 models:
-  - name: mart_content_performance_metrics
-    description: "sdfw"
+  - name: mart_avg_listening_habits
+    description: "Average number of songs listened per user, grouped by their subscription level (free vs paid)."
     columns:
-      - name: song_id
-        description: "asdf"
-        tests:
-          - unique 
-          - not_null
-
-  - name: mart_level_listening_volume
-    description: "adf"
-    columns:
-      - name: user_id
-        description: "asdf"
-        tests:
-          - unique 
-          - not_null
-
-  - name: mart_listening_volume_by_region_and_day
-    description: "adf"
-    columns:
-      - name: region 
-        description: "asdf"
+      - name: type
+        description: "The subscription level (free or paid)."
         tests:
           - not_null
+          - unique
           - accepted_values:
-              values: ['South', 'West', 'Midwest', 'Northeast']
-
-  - name: mart_total_duration_play_count_for_each_user_type
-    description: "adf"
-    columns:
-      - name: current_level
-        description: "asdf"
+              values: ['free', 'paid']
+      - name: avg_song
+        description: "The average number of songs listened."
         tests:
-          - unique 
+          - not_null
+
+  - name: mart_geo_user_distribution
+    description: "Distribution of users and conversion rates across different states."
+    columns:
+      - name: state_name
+        description: "The name of the state."
+        tests:
+          - not_null
+          - unique
+      - name: total_users
+        description: "Total number of unique users in the state."
+        tests:
+          - not_null
+      - name: conversion_rate_pct
+        description: "Percentage of total users located in this state."
+        tests:
+          - not_null
+
+  - name: mart_top_popular_song
+    description: "Top 10 most popular songs based on the number of unique listeners."
+    columns:
+      - name: song_name
+        description: "The name of the song."
+        tests:
+          - not_null
+          - unique
+
+  - name: mart_users_overview
+    description: "Overview of users including total, free, and paid users over time."
+    columns:
+      - name: date_day
+        description: "The date of the events."
+        tests:
+          - not_null
+          - unique
+      - name: total_users_by_month
+        description: "Total unique users for the given date."
+        tests:
           - not_null

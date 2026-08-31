@@ -3,10 +3,10 @@
 ## 1. Fact_Listen (ข้อมูลพฤติกรรมการฟังเพลง)
 **ข้อมูลหลัก:** `listen_events.csv`
 - **Fact Table:** `fact_listen_events` *(เก็บข้อมูลระดับ 1 row = 1 song played)*
-- **Dimensions:** `dim_date`, `dim_users`, `dim_content`, `dim_state`
+- **Dimensions:** `dim_users`, `dim_content`, `dim_state`
 
 ### Business Question 1
-> *"ในแต่ละเดือน ผู้ใช้งานกลุ่ม Paid และ Free มีระยะเวลาการฟังเพลงรวม (Total Listening Hours) และจำนวนครั้งที่ฟังเพลง (Total Play Counts)*
+> *"ในแต่ละเดือน ผู้ใช้งานกลุ่ม Paid และ Free มีระยะเวลาการฟังเพลงรวม (Total Listening Hours) และจำนวนครั้งที่ฟังเพลง (Total Play Counts) เท่าไหร่*
 
 ### Business Question 2 (มุมมอง CEO ด้านพฤติกรรมผู้ใช้งานและโครงสร้างพื้นฐาน)
 > *"ในแต่ละภูมิภาคมีอัตราการเข้าใช้ระบบเท่าใด? เพื่อใช้วางแผนการตลาดและปรับปรุงการรองรับของระบบ (Server Scale)"*

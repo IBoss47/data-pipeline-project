@@ -41,26 +41,6 @@ def ecom_pipeline():
 
         load_tasks.append(load_datasets(dataset))
 
-    dbt_build = BashOperator(
-        task_id="dbt_build",
-        bash_command="""
-        dbt run \
-        --project-dir /opt/dbt/streamify \
-        --profiles-dir /opt/dbt/profiles \
-        --target docker
-        """,
-    )
-
-    dbt_test = BashOperator(
-        task_id="dbt_test",
-        bash_command="""
-        dbt test \
-        --project-dir /opt/dbt/streamify \
-        --profiles-dir /opt/dbt/profiles \
-        --target docker
-        """,
-    )
-
-    load_tasks >> dbt_build >> dbt_test
+    load_tasks
 
 ecom_pipeline()

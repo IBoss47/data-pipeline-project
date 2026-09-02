@@ -21,4 +21,4 @@ select
     round(avg(song_count), 2) as avg_song
 from songs_per_user
 group by type
-order by type desc;
+order by type desc

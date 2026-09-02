@@ -1,8 +1,6 @@
 from airflow.providers.clickhousedb.hooks.clickhouse import ClickHouseHook
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
 from services.metadata.metadata_catalog import MetadataCatalog
-from io import BytesIO
-import pyarrow.parquet as pq
 
 class ClickHouseLoader:
     
@@ -22,31 +20,35 @@ class ClickHouseLoader:
         
         s3_hook = S3Hook(aws_conn_id = 'minio_conn')
 
+        credentials = s3_hook.get_credentials()
+        client = s3_hook.get_conn()
+        endpoint_url = client.meta.endpoint_url
+
         processed_key = MetadataCatalog().get_processed_key(
             dataset = config['name']
         )
+        bucket = config['storage']['bucket']
 
-        parquet_obj = s3_hook.get_key(
-            key = processed_key,
-            bucket_name = config['storage']['bucket']
-        )
-
-        parquet_bytes = parquet_obj.get()['Body'].read()
-        table = pq.read_table(BytesIO(parquet_bytes))
-        columns = table.column_names
-        
-        rows = []
-        for i in range(table.num_rows):
-            row = tuple(table.column(col)[i].as_py() for col in columns)
-            rows.append(row)
+        s3_url = f"{endpoint_url}/{bucket}/{processed_key}"
 
         database = config["target"]["database"]
         table_name = config["target"]["table"]
 
-        self.client.query(f"truncate table {database}.{table_name}")
+        self.client.command(f"truncate table {database}.{table_name}")
 
-        self.client.insert(
-            f"{database}.{table_name}",
-            rows,
-            column_names = columns
-        )
+        insert_query = f"""
+            insert into {database}.{table_name}
+            select * from s3(
+                '{s3_url}',
+                '{credentials.access_key}',
+                '{credentials.secret_key}',
+                'Parquet'
+            )
+        """
+        self.client.command(insert_query)
+
+    def close(self):
+        if hasattr(self.client, 'disconnect'):
+            self.client.disconnect()
+        elif hasattr(self.client, 'close'):
+            self.client.close()

@@ -12,8 +12,15 @@ def run_pipeline(dataset):
 
     ddl = ClickHouseDDLGenerator().create_table_sql(config= config)
 
-    ClickHouseLoader().execute_ddl(ddl)
+    loader = ClickHouseLoader()
 
-    ClickHouseLoader().load(config)
+    try:
+        loader.execute_ddl(ddl)
+        loader.load(config)
+    except Exception as e:
+        return e
+    finally:
+        loader.close()
+
 
 

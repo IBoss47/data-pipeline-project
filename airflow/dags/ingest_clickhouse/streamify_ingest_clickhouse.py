@@ -8,7 +8,7 @@ from airflow.providers.standard.operators.bash import BashOperator
 from airflow.sdk import dag, task, AssetAll, Asset
 
 
-from services.pipeline.run_pipeline import run_pipeline
+from services.pipeline.run_clickhouse_loader import run_pipeline
 
 DATASET_PATH = Path("/opt/airflow/config/datasets")
 
@@ -20,13 +20,13 @@ for dataset_file in DATASET_PATH.glob("*.yml"):
     assets.append(asset)
 
 @dag(
-    dag_id="streamify_pipeline",
+    dag_id="streamify_ingest_clickhouse",
     start_date=datetime(2024, 1, 1),
     schedule= AssetAll(*assets),
     catchup=False,
 )
 
-def ecom_pipeline():
+def load_to_clickhouse():
 
     load_tasks = []
 
@@ -43,4 +43,4 @@ def ecom_pipeline():
 
     load_tasks
 
-ecom_pipeline()
+load_to_clickhouse()

@@ -21,15 +21,4 @@
         </local_directory>
     </user_directories>
 
-    <distributed_ddl>
-        <path>/clickhouse/task_queue/ddl</path>
-    </distributed_ddl>
-
-    <!-- Keeper connection (replaces ZooKeeper) -->
-    <zookeeper>
-        <node>
-            <host>clickhouse-keeper</host>
-            <port>9181</port>
-        </node>
-    </zookeeper>
 </clickhouse>

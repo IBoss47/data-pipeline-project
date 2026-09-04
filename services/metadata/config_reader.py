@@ -1,5 +1,8 @@
 from pathlib import Path
 import yaml
+import logging
+
+logger = logging.getLogger(__name__)
 
 def load_config(dataset_name : str):
     path = (
@@ -8,4 +11,8 @@ def load_config(dataset_name : str):
     )
 
     with open(path) as f:
-        return yaml.safe_load(f)
+        try:
+            return yaml.safe_load(f)
+        except Exception as e:
+            logger.error(f"Failed to load config")
+            raise e

@@ -1,6 +1,7 @@
-from airflow.sdk import dag, task, AssetAll, Asset
-from airflow.providers.standard.operators.bash import BashOperator
+from airflow.sdk import dag
 from datetime import datetime
+from pathlib import Path
+from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
 
 @dag(
     dag_id = 'dbt_pipeline',
@@ -11,15 +12,24 @@ from datetime import datetime
 
 def dbt_process_pipeline():
 
-    dbt_build = BashOperator(
-            task_id="dbt_build",
-            bash_command="""
-            dbt build \
-            --project-dir /opt/dbt/streamify \
-            --profiles-dir /opt/dbt/profiles \
-            --target docker
-            """,
+    profile_config = ProfileConfig(
+        profile_name = 'streamify',
+        target_name = 'docker',
+        profiles_yml_filepath = Path('/opt/dbt/profiles/profiles.yml')
+    )
+
+    project_config = ProjectConfig(
+        dbt_project_path = '/opt/dbt/streamify'
+    )
+
+    dbt_build = DbtTaskGroup(
+        group_id = 'dbt_build',
+        project_config = project_config,
+        profile_config = profile_config,
+        execution_config = ExecutionConfig(
+            dbt_executable_path = 'dbt'
         )
+    )
 
     dbt_build
 dbt_process_pipeline()

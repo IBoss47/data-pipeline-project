@@ -1,5 +1,4 @@
 from airflow.sdk import Asset, dag, task
-from airflow import DAG
 from datetime import datetime
 from pathlib import Path
 from services.pipeline.run_minio_loader import run_minio_loader

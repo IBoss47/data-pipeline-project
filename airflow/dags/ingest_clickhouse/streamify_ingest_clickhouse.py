@@ -1,10 +1,5 @@
 from datetime import datetime
 from pathlib import Path
-from pprint import pprint
-
-from airflow import DAG
-from airflow.providers.standard.operators.python import PythonOperator
-from airflow.providers.standard.operators.bash import BashOperator
 from airflow.sdk import dag, task, AssetAll, Asset
 
 

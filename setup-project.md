@@ -7,7 +7,7 @@ Clone the repository and switch to the `poc/streamify-pipeline` branch:
 ```bash
 git clone https://github.com/IBoss47/data-pipeline-project.git
 cd data-pipeline-project
-git checkout poc/streamify-pipeline
+git switch poc/streamify-pipeline
 ```
 
 ## 2. Setup Environment Variables
@@ -65,7 +65,13 @@ streamify:
       secure: false
 ```
 
-## 4. Setup Variable Connection
+## 4. Start Services
+Run Docker Compose to start the project services in detached mode:
+```bash
+docker compose up -d
+```
+
+## 5. Setup Variable Connection
 Follow these steps to configure your variables and connections in the Airflow UI:
 
 1. **Go to Connections**: From the Airflow UI, click on **Admin** > **Connections**.
@@ -104,13 +110,6 @@ Follow these steps to configure your variables and connections in the Airflow UI
    }
    ```
    ![Step 5](images/STEP5.png)
-
-
-## 5. Start Services
-Run Docker Compose to start the project services in detached mode:
-```bash
-docker compose up -d
-```
 
 ## 6. Access the Platforms
 Once the services are running, you can access the platforms via your web browser:

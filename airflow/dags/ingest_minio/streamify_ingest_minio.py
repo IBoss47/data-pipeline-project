@@ -5,10 +5,11 @@ from services.pipeline.run_minio_loader import run_minio_loader
 
 DATASET_PATH = Path("/opt/airflow/config/datasets")
 
+asset = Asset(f"s3://streamify/init")
 @dag(
     dag_id = 'streamify_ingest_minio',
     start_date=datetime(2024, 1, 1),
-    schedule="@daily",
+    schedule=[asset],
     catchup=False
 )
 
@@ -18,7 +19,7 @@ def load_to_minio():
     
     for dataset_file in DATASET_PATH.glob("*.yml"):
         dataset = dataset_file.stem
-        asset = Asset(f"s3://ecom/raw/{dataset}")
+        asset = Asset(f"s3://streamify/raw/{dataset}")
 
         @task(task_id = f"load_{dataset}", outlets = [asset])
         def load_datasets(dataset_name: str, ds = None):

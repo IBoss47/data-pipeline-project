@@ -1,11 +1,20 @@
-from airflow.sdk import dag
+from airflow.sdk import dag, AssetAll, Asset
 from datetime import datetime
 from pathlib import Path
 from cosmos import DbtTaskGroup, ProjectConfig, ProfileConfig, ExecutionConfig
 
+DATASET_PATH = Path("/opt/airflow/config/datasets")
+
+assets = []
+for dataset_file in DATASET_PATH.glob("*.yml"):
+    dataset = dataset_file.stem
+    asset = Asset(f"s3://streamify/clickhouse/{dataset}")
+
+    assets.append(asset)
+
 @dag(
     dag_id = 'dbt_pipeline',
-    schedule= None,
+    schedule= AssetAll(*assets),
     start_date=datetime(2026, 7, 24),
     catchup=False
 )

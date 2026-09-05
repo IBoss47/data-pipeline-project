@@ -10,7 +10,7 @@ DATASET_PATH = Path("/opt/airflow/config/datasets")
 assets = []
 for dataset_file in DATASET_PATH.glob("*.yml"):
     dataset = dataset_file.stem
-    asset = Asset(f"s3://ecom/raw/{dataset}")
+    asset = Asset(f"s3://streamify/raw/{dataset}")
 
     assets.append(asset)
 
@@ -26,10 +26,11 @@ def load_to_clickhouse():
     load_tasks = []
 
     for dataset_file in DATASET_PATH.glob("*.yml"):
-        
-        dataset = dataset_file.stem
 
-        @task(task_id = f"load_{dataset}")
+        dataset = dataset_file.stem
+        asset = Asset(f"s3://streamify/clickhouse/{dataset}")
+
+        @task(task_id = f"load_{dataset}", outlets=[asset])
         def load_datasets(dataset_name: str, ds = None):
 
             run_pipeline(dataset = dataset_name)

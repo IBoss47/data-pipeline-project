@@ -1,4 +1,4 @@
-from airflow.sdk import dag, task
+from airflow.sdk import dag, task, Asset
 from services.bootstrap.init_metadata import init_metadata
 from datetime import datetime
 
@@ -10,8 +10,8 @@ from datetime import datetime
 )
 
 def init_platform():
-
-    @task
+    asset = Asset(f"s3://streamify/init")
+    @task(task_id = "initial_metadata", outlets = [asset])
     def setup():
         init_metadata()
     setup()

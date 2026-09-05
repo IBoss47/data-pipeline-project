@@ -61,7 +61,6 @@ profiles.yml
 # Data & Large Files
 # ========================================
 # Ignore data files to prevent pushing large datasets to Git
-*.csv
 *.parquet
 *.xlsx
 *.gz

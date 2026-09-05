@@ -10,9 +10,13 @@
 > * โครงสร้างของ Project นี้ได้มีการ Clone มาจาก Github Repo ที่เป็น Structure ที่ผมได้เคยทำไว้ และนำมาปรับและต่อยอดจากของเดิม
 > * ข้อมูลที่ใช้ใน Project นี้เป็นข้อมูลจาก **[Streamify](https://github.com/ankurchavda/streamify)** ซึ่งจะดึงข้อมูลจำลองมา ณ ช่วงเวลาใดเวลานึงเพียงเท่านั้น และจะถูกจัดเก็บใน `data/`
 
+## Project Setup (การติดตั้งและตั้งค่าโปรเจค)
+
+สำหรับขั้นตอนการติดตั้งและรันโปรเจคนี้บนเครื่องของคุณ สามารถดูได้ที่ **[คู่มือการตั้งค่าโปรเจค (Project Setup Guide)](setup-project.md)**
+
 ## System Architecture
 
-![System Architecture](stack.png)
+![System Architecture](images/stack.png)
 
 ## Pipeline Workflow
 
@@ -84,7 +88,7 @@ ___
 
 ## บทสรุปและสิ่งที่ได้เรียนรู้
 
-![Dashboard](dashboard.png)
+![Dashboard](images/dashboard.png)
 **ลิงก์ Dashboard:** [Streamify Dashboard](https://datastudio.google.com/reporting/107e96a5-47d7-406b-bc8d-01d3cba74cc9)
 
 ### สิ่งที่ได้เรียนรู้จากโปรเจคนี้

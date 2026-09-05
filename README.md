@@ -10,9 +10,13 @@ This project is a Data Pipeline designed for analyzing music streaming behavior 
 > * The structure of this Project was cloned from a Github Repo I previously created, and then adapted and enhanced from its original version.
 > * The data used in this Project is from **[Streamify](https://github.com/ankurchavda/streamify)**, which simulates and extracts mock data for a specific point in time and is stored in `data/`.
 
+## Project Setup
+
+For instructions on how to set up and run this project locally, please refer to the **[Project Setup Guide](setup-project.md)**.
+
 ## System Architecture
 
-![System Architecture](stack.png)
+![System Architecture](images/stack.png)
 
 ## Pipeline Workflow
 
@@ -85,7 +89,7 @@ ___
 
 ## Project Summary & Reflection
 
-![Dashboard](dashboard.png)
+![Dashboard](images/dashboard.png)
 **Dashboard public link:** [Streamify Dashboard](https://datastudio.google.com/reporting/107e96a5-47d7-406b-bc8d-01d3cba74cc9)
 
 ### What did you learn from this project?

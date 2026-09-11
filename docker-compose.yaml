@@ -30,6 +30,7 @@ x-airflow-common:
     - ${AIRFLOW_PROJ_DIR:-./airflow}/config:/opt/airflow/config
     - ./dbt:/opt/dbt
     - ./services:/opt/services
+    - ./kafka:/opt/kafka
     - ./data:/opt/data
 
   user: "${AIRFLOW_UID:-50000}:0"

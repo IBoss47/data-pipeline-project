@@ -14,7 +14,7 @@ for dataset_file in DATASET_PATH.glob("*.yml"):
 
 @dag(
     dag_id = 'dbt_pipeline',
-    schedule= AssetAll(*assets),
+    schedule= '@hourly',
     start_date=datetime(2026, 7, 24),
     catchup=False
 )

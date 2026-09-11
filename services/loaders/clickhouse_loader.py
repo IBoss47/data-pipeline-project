@@ -1,6 +1,6 @@
 from airflow.providers.clickhousedb.hooks.clickhouse import ClickHouseHook
 from airflow.providers.amazon.aws.hooks.s3 import S3Hook
-from services.metadata.metadata_catalog import MetadataCatalog
+from services.metadata.init_stream_platform import MetadataCatalog
 
 class ClickHouseLoader:
     

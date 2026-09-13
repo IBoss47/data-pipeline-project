@@ -29,7 +29,7 @@ with rename as (
     from {{source('stg_streamify', 'raw_listen_events')}}
 )
 
-select 
+select distinct
     nullif(artist, '') as artist,
     nullif(song, '') as song,
     duration,

@@ -22,7 +22,9 @@
 
 ```mermaid
 flowchart LR
-    Airflow[Airflow DAGs] --> Services[Python Services]
+    Airflow[Airflow DAGs] --> Services[Python Data Producer]
+    Services --> Kafka[Kafka Topics]
+    Kafka --> ClickHouse[ClickHouse Kafka Engine]
     
     subgraph dbt [dbt Transformation]
         direction LR
@@ -31,10 +33,12 @@ flowchart LR
         CORE --> MARTS[Marts]
     end
     
-    Services --> STG
+    ClickHouse --> STG
+    Airflow --> dbt
 
     style Airflow fill:#e8f4f8,stroke:#017cee,stroke-width:2px,color:#000
     style Services fill:#f0f5f9,stroke:#306998,stroke-width:2px,color:#000
+    style Kafka fill:#e8f4f8,stroke:#017cee,stroke-width:2px,color:#000
     style dbt fill:#fff0ed,stroke:#ff694b,stroke-width:2px,color:#000
 ```
 ---
@@ -101,8 +105,10 @@ ___
 - ได้เรียนรู้การใช้ SQL เช่น CTE, Aggregate function, subquery ได้มากกว่าการฟังคลิปสอน
 - ได้เรียนรู้การเขียน Generic test, Singular test
 
+### อัปเดตล่าสุด (What's New)
+- **การเชื่อมต่อกับ Kafka:** ประสบความสำเร็จในการเชื่อมต่อ Kafka เพื่อเปลี่ยนจากกระบวนการแบบ Batch มาเป็นแบบ Real-time Streaming สามารถอ่านรายละเอียดเพิ่มเติมได้ที่ [Kafka Integration Plan](kafka_integration_plan.md)
+
 ### แนวทางการพัฒนาต่อยอด
-- เชื่อมการส่งข้อมูลด้วย Kafka เหมือนกับที่ Project **[Streamify](https://github.com/ankurchavda/streamify)** ต้นแบบทำ
 - เพิ่มการใช้ PySpark ในการทำ layer ก่อนเข้า dbt 
 - ลองเรียนรู้การทำ snapshot และการทำตารางแบบ incremental
 

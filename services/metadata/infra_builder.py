@@ -2,7 +2,7 @@ import pyarrow as pa
 
 class ClickHouseDDLGenerator:
 
-    def create_kafka_streaming_sql(self, config, kafka_broker='kafka:29092', kafka_topic='streamify_listen_events_v2', kafka_group='clickhouse_consumer'):
+    def create_kafka_streaming_sql(self, config, kafka_broker='kafka:29092', kafka_topic='stream_listen_events', kafka_group='clickhouse_consumer'):
         database = config['target']['database']
         table = config['target']['table']
         order_by = ", ".join(config['target']['order_by'])

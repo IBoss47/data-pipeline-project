@@ -15,7 +15,7 @@ This project is a **Modern Real-Time Streaming Data Pipeline** designed for anal
 For instructions on how to set up and run this project locally, please refer to the **[Project Setup Guide](setup-project.md)**.
 For a deep-dive into how we migrated from Batch to Streaming, check out the **[Kafka Integration Plan](kafka_integration_plan.md)**!
 
-## System Architecture (The Medallion Architecture)
+## Workflow of this project
 
 ```mermaid
 flowchart LR

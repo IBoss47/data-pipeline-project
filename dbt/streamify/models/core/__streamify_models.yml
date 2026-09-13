@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: dim_streamify__contents
+    description: "Contents dimention, that show song and artist."
+    columns:
+      - name: song_id
+        description: "Primary key for content."
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_streamify__users
+    description: "Users dimention, that show infomation of user"
+    columns:
+      - name: user_id
+        description: "Primary key for each user."
+        tests:
+          - not_null
+          - unique
+
+  - name: fct_streamify__listen_events
+    description: "each row = 1 event per 1 user"
+    columns:
+      - name: event_id
+        description: "Primary key for each row."
+        tests:
+          - not_null
+          - unique
+      - name: song_id
+        description: "Reference key for related contents table."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_streamify__contents')
+              field: song_id
+      - name: user_id
+        description: "Reference key for related users table."
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_streamify__users')
+              field: user_id

@@ -1,0 +1,22 @@
+version: 2
+
+models:
+
+  - name: stg_streamify__listen_events
+    description: "Staging model for song listen events."
+    columns:
+      - name: time_stamp
+        tests:
+          - not_null
+      - name: user_id
+        description: "The unique identifier for the user."
+        tests:
+          - not_null
+      - name: level
+        tests:
+          - accepted_values:
+              values: ['free', 'paid']
+      - name: gender
+        tests:
+          - accepted_values:
+              values: ['female', 'male']

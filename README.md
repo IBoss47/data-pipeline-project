@@ -74,7 +74,8 @@ This layer uses **dbt** to clean and transform the streaming data, divided into 
 ### 4. `airflow/` (Data Orchestration)
 Folder for managing Workflows and Scheduling the Data Pipeline.
 - **`dags/`**: 
-  - `simulate_stream.py`: A DAG with a BashOperator that triggers our Python Producer to start streaming data into Kafka.
+  - `init_platform.py`: A utility DAG that generates the ClickHouse DDL commands (MergeTree, Kafka Engine, and Materialized Views) based on our dataset YAML configurations.
+  - `simulate_stream.py`: A DAG with a BashOperator that triggers our Python Producer to start streaming data into Kafka. *(**Note:** In a real-world production environment, Kafka Producers are standalone backend applications. We use Airflow to trigger it here purely as a convenient UI to run our simulation for studying/testing).*
   - `streamify_dbt_process.py`: A DAG running on a Time-Based (Cron) schedule that tells dbt to continually process the newest streaming data and update the dashboards.
 
 ---

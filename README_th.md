@@ -2,43 +2,39 @@
   🌐 <strong><a href="README.md">🇬🇧 English</a></strong> | <strong><a href="README_th.md">🇹🇭 ภาษาไทย</a></strong>
 </div>
 
-# Streamify Data Pipeline Project
+# Streamify Data Pipeline Project (Streaming Edition)
 
-โปรเจคนี้เป็นระบบ Data Pipeline สำหรับวิเคราะห์ข้อมูลพฤติกรรมการฟังเพลงจากแพลตฟอร์มจำลอง (Streamify) โดยมีการประยุกต์ใช้ **Modern Data Stack** อย่าง `dbt`, `ClickHouse` และ `Airflow` ในการทำ Data Modeling และทำ Pipeline
+โปรเจคนี้เป็นระบบ **Modern Real-Time Streaming Data Pipeline** สำหรับวิเคราะห์ข้อมูลพฤติกรรมการฟังเพลงจากแพลตฟอร์มจำลอง (Streamify) โดยมีการประยุกต์ใช้เครื่องมือระดับองค์กร ได้แก่ `Kafka`, `ClickHouse`, `dbt`, และ `Airflow` ในการรับส่งข้อมูลแบบเรียลไทม์, ทำ Data Modeling, และทำ Pipeline Orchestration
 
 > **หมายเหตุ:** 
-> * โครงสร้างของ Project นี้ได้มีการ Clone มาจาก Github Repo ที่เป็น Structure ที่ผมได้เคยทำไว้ และนำมาปรับและต่อยอดจากของเดิม
-> * ข้อมูลที่ใช้ใน Project นี้เป็นข้อมูลจาก **[Streamify](https://github.com/ankurchavda/streamify)** ซึ่งจะดึงข้อมูลจำลองมา ณ ช่วงเวลาใดเวลานึงเพียงเท่านั้น และจะถูกจัดเก็บใน `data/`
+> * โครงสร้างเดิมของ Project นี้เป็นแบบ Batch Processing แต่ได้รับการอัปเกรดใหม่ทั้งหมดให้เป็นระบบ Real-time Streaming
+> * ข้อมูลที่ใช้ใน Project นี้เป็นข้อมูลจาก **[Streamify](https://github.com/ankurchavda/streamify)** ซึ่งจะดึงข้อมูลจำลองมา และถูกจัดเก็บใน `data/`
 
 ## Project Setup (การติดตั้งและตั้งค่าโปรเจค)
 
 สำหรับขั้นตอนการติดตั้งและรันโปรเจคนี้บนเครื่องของคุณ สามารถดูได้ที่ **[คู่มือการตั้งค่าโปรเจค (Project Setup Guide)](setup-project.md)**
+สำหรับรายละเอียดเจาะลึกว่าเราย้ายจากระบบ Batch มาเป็น Streaming ได้อย่างไร สามารถดูได้ที่ **[Kafka Integration Plan](kafka_integration_plan.md)**!
 
-## System Architecture
-
-![System Architecture](images/stack.png)
-
-## Pipeline Workflow
+## System Architecture (The Medallion Architecture)
 
 ```mermaid
 flowchart LR
-    Airflow[Airflow DAGs] --> Services[Python Data Producer]
-    Services --> Kafka[Kafka Topics]
-    Kafka --> ClickHouse[ClickHouse Kafka Engine]
+    Data[Raw CSV Data] --> Producer[Python Kafka Producer]
+    Producer --> Kafka[Kafka Topics]
+    Kafka --> CH_Kafka[ClickHouse Kafka Engine Table]
+    CH_Kafka --> CH_MV[Materialized View]
+    CH_MV --> CH_MergeTree[ClickHouse Bronze Table]
     
     subgraph dbt [dbt Transformation]
         direction LR
-        STG[Staging] --> INT[Intermediate]
-        INT --> CORE[Fact & Dim]
-        CORE --> MARTS[Marts]
+        CH_MergeTree --> STG[Staging / Silver] --> INT[Intermediate] --> CORE[Fact & Dim / Gold]
     end
     
-    ClickHouse --> STG
+    Airflow[Airflow DAGs] --> Producer
     Airflow --> dbt
 
-    style Airflow fill:#e8f4f8,stroke:#017cee,stroke-width:2px,color:#000
-    style Services fill:#f0f5f9,stroke:#306998,stroke-width:2px,color:#000
     style Kafka fill:#e8f4f8,stroke:#017cee,stroke-width:2px,color:#000
+    style Producer fill:#f0f5f9,stroke:#306998,stroke-width:2px,color:#000
     style dbt fill:#fff0ed,stroke:#ff694b,stroke-width:2px,color:#000
 ```
 ---
@@ -50,44 +46,46 @@ flowchart LR
 - **Note:** ไฟล์ข้อมูลขนาดใหญ่จะไม่ถูกนำขึ้น Git (ถูกกำหนดไว้ใน `.gitignore`) 
 - จะมีเพียงไฟล์ `_sample.csv` ที่จำกัด **200 แถว** สำหรับใช้ทดสอบรันระบบเบื้องต้นเท่านั้น
 
-### 2. `services/` (Python Data Ingestion)
-ชุดคำสั่ง Python สำหรับนำเข้าและจัดการไฟล์ก่อนส่งเข้า Data Warehouse
-- **`extractors/csv_extractor.py`**: ช่วยในการอ่านไฟล์ CSV 
-- **`converters/parquet_converter.py`**: แปลงไฟล์จาก Raw CSV ให้เป็น Parquet Format 
-- **`metadata/ddl_generator.py`**: ตัวช่วยแกะโครงสร้างข้อมูล (Schema) ออกมาเป็นคำสั่ง DDL เพื่อสร้างตารางใน ClickHouse
+### 2. `kafka/` (Python Data Producer)
+โฟลเดอร์ที่เก็บสคริปต์สำหรับจำลองการส่งข้อมูล (Streaming) แบบสดๆ
+- **`producer/kafka_producer.py`**: สคริปต์ Python ที่ทำหน้าที่อ่านไฟล์ CSV และส่งข้อมูลทีละแถวเข้าสู่ Kafka Topics พร้อมปรับรูปแบบวันที่และค่า Null ให้ถูกต้องเพื่อรองรับการ Parsing JSON แบบเข้มงวด
 
-### 3. `dbt/streamify/` (Data Transformation)
-การทำงานในส่วนนี้ถูกแบ่งออกเป็น 3 ชั้น (Layers) หลักๆ:
+### 3. `services/` (Infrastructure & Metadata)
+ชุดคำสั่งสำหรับสร้าง Data Warehouse Infrastructure
+- **`metadata/ddl_generator.py`**: ตัวช่วยสร้างสคริปต์อัตโนมัติในการสร้างตารางและสถาปัตยกรรมต่างๆ ใน ClickHouse (MergeTree tables, Kafka Engine tables, และ Materialized Views) โดยอิงตาม YAML Config
 
-- **`models/staging/`** *(ชั้นทำความสะอาด)*
-  - **Files:** `stg_streamify__listen_events`, `stg_streamify__auth_events`, `stg_streamify__page_view_events`
+### 4. `dbt/streamify/` (Data Transformation)
+การทำงานในส่วนนี้ใช้ **dbt** ในการทำความสะอาดและแปลงข้อมูล Streaming โดยแบ่งออกเป็น 3 ชั้น (Layers) หลักๆ:
+
+- **`models/staging/`** *(Silver Layer)*
+  - **Files:** `stg_streamify__listen_events`, `stg_streamify__auth_events`
+  - **หน้าที่:** ทำความสะอาดข้อมูล Streaming, จัดการค่า Null, และ **ทำ Deduplication** เพื่อลบข้อมูลซ้ำซ้อนที่อาจเกิดจากการ Stream เข้ามา
 
 - **`models/intermediate/`** *(OBT)*
   - **Files:** `int_streamify__listen_events`
+  - **หน้าที่:** จัดการ Window Functions ที่ซับซ้อน (เช่น ดึงระดับสมาชิกผู้ใช้ล่าสุด) ด้วย `ROW_NUMBER()`
 
-- **`models/core/`** *(Star Schema)*
-  - **หน้าที่:** แตกตารางออกจาก Intermediate แยกเป็น **Dimension (ตารางมิติ)** เพื่ออธิบายข้อมูล และ **Fact (ตารางเหตุการณ์)** เพื่อเก็บตัวเลขการกระทำ
+- **`models/core/`** *(Gold Layer - Star Schema)*
+  - **หน้าที่:** แตกตารางแยกเป็น **Dimension** เพื่ออธิบายข้อมูล และ **Fact** เพื่อเก็บตัวเลขการกระทำ
   - **ไฟล์สำคัญ:** 
     - `fct_streamify__listen_events` *(Fact การฟังเพลง)*
     - `dim_streamify__users`, `dim_streamify__contents`, `dim_streamify__date` *(Dimension ต่างๆ)*
 
-### 4. `airflow/` (Data Orchestration)
+### 5. `airflow/` (Data Orchestration)
 โฟลเดอร์สำหรับจัดการ Workflow และตั้งเวลาการทำงาน (Scheduling) ของ Data Pipeline
-- **`dags/`**: โฟลเดอร์สำหรับเก็บไฟล์ DAG (Directed Acyclic Graph) ซึ่งใช้กำหนดลำดับขั้นตอนการทำงานของ Pipeline เช่น สั่งรัน Python Script เพื่อนำเข้าข้อมูล แล้วตามด้วยการสั่ง `dbt run`
-- **`config/datasets/`**: จัดเก็บไฟล์การตั้งค่า (Config/Metadata) ที่เกี่ยวข้องกับชุดข้อมูล เพื่อให้ Airflow สามารถอ้างอิงและจัดการข้อมูลได้อย่างเป็นระบบ
+- **`dags/`**: 
+  - `init_platform.py`: ยูทิลิตี้ DAG ที่ใช้สร้างคำสั่ง DDL ของ ClickHouse (ตาราง MergeTree, Kafka Engine, และ Materialized Views) โดยอิงตามการตั้งค่าจากไฟล์ YAML
+  - `simulate_stream.py`: DAG ที่ใช้ BashOperator เพื่อสั่งรัน Python Producer ให้เริ่มทำการจำลองการส่งข้อมูลเข้า Kafka 
+    *(**หมายเหตุ:** ในโลกของการทำงานจริง (Production) Kafka Producer จะเป็นแอปพลิเคชัน Backend ที่แยกออกไปต่างหาก การที่เราใช้ Airflow เป็นตัวสั่งรันที่นี่ เป็นเพียงเพื่อความสะดวกในการใช้ UI จำลองการทำงานเพื่อการศึกษาและทดสอบเท่านั้น)*
+  - `streamify_dbt_process.py`: DAG ที่ทำงานบนตารางเวลา (Cron) แบบอิงเวลา เพื่อสั่งให้ dbt ทำการประมวลผลข้อมูล Streaming ใหม่ล่าสุดและอัปเดตหน้า Dashboard อย่างต่อเนื่อง
 
 ---
 
 ## การจำลองสถานการณ์ทางธุรกิจ (Business Scenario Simulation)
 
-เนื่องจากโปรเจคนี้จัดทำขึ้นเพื่อฝึกฝนการสร้าง Data Pipeline และพัฒนาทักษะในสายงาน Data Engineer แต่ในโลกของการทำงานจริงนั้น Data Engineer จำเป็นต้องมีการสื่อสารและทำงานร่วมกับหลายฝ่าย เช่น Data Owner, Business Analyst (BA), Data Scientist และผู้บริหาร
+เนื่องจากโปรเจคนี้จัดทำขึ้นเพื่อฝึกฝนการสร้าง Data Pipeline ผมจึงได้ทำการ Prompt AI เพื่อจำลองบทบาทต่างๆ ในโปรเจค (Data Owner, BA, CEO) เพื่อให้เห็นภาพการทำงานที่ใกล้เคียงกับความเป็นจริงมากที่สุด
 
-ดังนั้น เพื่อให้เห็นภาพการทำงานที่ใกล้เคียงกับความเป็นจริงมากที่สุด ผมจึงได้ทำการ Prompt AI เพื่อจำลองบทบาท (Roles) ต่างๆ ที่เกี่ยวข้อง ดังนี้:
-- **Data Source Owner**
-- **Business Analyst (BA)**
-- **CEO**
-
-สามารถดูรายละเอียดคำถามทางธุรกิจ (Business Questions) ที่ได้จากการจำลองสถานการณ์นี้ได้ที่: <strong><a href="dbt/streamify/models/bussiness_question.md">Business Questions</a></strong>
+สามารถดูรายละเอียดคำถามทางธุรกิจที่ได้จากการจำลองสถานการณ์นี้ได้ที่: <strong><a href="dbt/streamify/models/bussiness_question.md">Business Questions</a></strong>
 ___
 
 ## บทสรุปและสิ่งที่ได้เรียนรู้
@@ -95,23 +93,14 @@ ___
 ![Dashboard](images/dashboard.png)
 **ลิงก์ Dashboard:** [Streamify Dashboard](https://datastudio.google.com/reporting/107e96a5-47d7-406b-bc8d-01d3cba74cc9)
 
-### สิ่งที่ได้เรียนรู้จากโปรเจคนี้
-- ได้เรียนรู้การรับมือกับข้อมูล
-- ได้เรียนรู้ว่าถ้าเราต้องการสร้าง dimension แต่ข้อมูลต้นทางไม่มี primary key สำหรับ dimension นั้น ๆ เราสามารถสร้าง key ด้วยการ hash ได้
-- เรียนรู้การเชื่อมโยงของ Data modeling layer ต่าง ๆ ว่ามีหน้าที่อะไรสอดคล้องกันยังไง
-- จากโครงสร้าง Project ที่ผมทำ ผมได้เรียนรู้ว่าควรจะแบ่งการทำงานออกจากกันให้ชัดเจน ตัวอย่างเช่น การแยก folder `airflow`, `dbt`, `services` ออกจากกัน และให้ airflow ทำหน้าที่เป็น Orchestrator เต็มรูปแบบ
-- ได้รู้จักการทำ `metadata` เบื้องต้น
-- ได้เรียนรู้การเก็บข้อมูลใน Minio เพิ่มเติม
-- ได้เรียนรู้การใช้ SQL เช่น CTE, Aggregate function, subquery ได้มากกว่าการฟังคลิปสอน
-- ได้เรียนรู้การเขียน Generic test, Singular test
-
-### อัปเดตล่าสุด (What's New)
-- **การเชื่อมต่อกับ Kafka:** ประสบความสำเร็จในการเชื่อมต่อ Kafka เพื่อเปลี่ยนจากกระบวนการแบบ Batch มาเป็นแบบ Real-time Streaming สามารถอ่านรายละเอียดเพิ่มเติมได้ที่ [Kafka Integration Plan](kafka_integration_plan.md)
+### สิ่งที่ได้เรียนรู้จากการอัปเกรดระบบเป็น Streaming
+- **Kafka & Real-Time Ingestion:** ได้เรียนรู้วิธีการสตรีมข้อมูลด้วย Producer, จัดการ Kafka Topic, และการนำเข้าข้อมูลแบบอัตโนมัติโดยใช้ Kafka Table Engine ที่เป็น Native ของ ClickHouse
+- **Docker Networking & DevOps:** ได้เรียนรู้การจัดการ Dependency (เช่น `confluent-kafka`) เข้าไปใน Docker Image ด้วย `requirements.txt` และเข้าใจการทำงานของ Container Network
+- **Data Engineering Debugging:** ได้ประสบการณ์จริงในการแก้ปัญหา Parsing แบบเข้มงวดของ ClickHouse (เช่น การจัดการ `NaN` ของ Python เทียบกับ `null` ของ JSON) และวิธีแก้ปัญหา **"Poison Pill"** (ข้อมูลพังที่ติดอยู่ในคิวของ Kafka)
+- **Idempotency & Deduplication:** ได้เรียนรู้ข้อดีข้อเสียระหว่างการใช้ฟีเจอร์ `ReplacingMergeTree` ของ ClickHouse กับการทำ Deduplication ผ่าน dbt Staging ด้วย `DISTINCT` หรือ `ROW_NUMBER()`
+- **Airflow Orchestration:** ประสบความสำเร็จในการปรับเปลี่ยน Airflow จากเดิมที่ต้องรอ Batch การโหลดข้อมูล (Data-Aware Scheduling) มาเป็นการตั้งเวลาแบบ Cron เพื่ออัปเดตข้อมูล Streaming เข้าสู่โมเดลต่างๆ 
 
 ### แนวทางการพัฒนาต่อยอด
-- เพิ่มการใช้ PySpark ในการทำ layer ก่อนเข้า dbt 
-- ลองเรียนรู้การทำ snapshot และการทำตารางแบบ incremental
-
-### สิ่งที่จะทำแตกต่างไปหากเริ่มทำโปรเจคนี้ใหม่
-- ทดลองกับข้อมูลที่หลากหลายขึ้น ไม่ใช่แค่การจำลองข้อมูลในรูปแบบการฟังเพลงเท่านั้น
-- เปลี่ยน Business เพื่อเพิ่มความหลากหลายในการ query
+- ลองใช้งาน **dbt incremental models** เพื่อประมวลผลเฉพาะข้อมูลที่เข้ามาใหม่ แทนการคำนวณ Fact Table ใหม่ทั้งหมดทุกครั้ง
+- เพิ่ม **dbt tests** (Data Quality) เพื่อเอนชัวร์ความถูกต้องของข้อมูลสตรีมแบบเรียลไทม์ (เช่น เช็คว่าเพลงต้องมีความยาวไม่ติดลบ)
+- นำ PySpark Structured Streaming เข้ามาใช้สำหรับการทำ Transformation ขั้นซับซ้อนก่อนที่ข้อมูลจะไปถึง ClickHouse

@@ -13,7 +13,7 @@ from services.pipeline.run_clickhouse_loader import run_pipeline
     Outlets: s3://streamify/clickhouse/{dataset}
  
  Workflows :
-    init_platform --> streamify_ingest_minio --> streamify_ingest_clickhouse (current) --> ...
+    init_platform --> streamify_ingest_minio --> streamify_ingest_clickhouse (current) --> streamify_dbt_process
 
  Warnings & Edge Cases:
     - Empty Directory Edge Case: If `/opt/airflow/config/datasets` contains no `.yml` files at parse time,

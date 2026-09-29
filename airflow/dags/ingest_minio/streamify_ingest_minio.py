@@ -13,7 +13,7 @@ from services.pipeline.run_minio_loader import run_minio_loader
     Outlets: s3://streamify/raw/{dataset}
 
  Workflows :
-    init_platform --> streamify_ingest_minio (current) --> ...
+    init_platform --> streamify_ingest_minio (current) --> streamify_ingest_clickhouse --> streamify_dbt_process
 
  Warnings & Edge Cases:
     - Empty Directory Edge Case: If `/opt/airflow/config/datasets` contains no `.yml` files at parse time,

@@ -1,5 +1,24 @@
 import pyarrow as pa
 
+"""
+ Script Purpose:
+    This utility module dynamically generates ClickHouse DDL queries and PyArrow schemas 
+    based on YAML configuration definitions for raw data ingestion and pipeline conversion.
+
+    Classes:
+    - ClickHouseDDLGenerator: Constructs CREATE DATABASE and CREATE TABLE SQL statements.
+    - PyArrowSchemaGenerator: Converts YAML data types to explicit PyArrow schema definitions.
+
+ Warnings & Edge Cases:
+    - Unmapped Data Types: If `column_types` in the YAML config contains a data type not present in 
+      `PyArrowSchemaGenerator.TYPE_MAPPING` (e.g., Decimal, Array, or LowCardinality), 
+      a `KeyError` will be raised during schema generation.
+    - Missing Config Keys: Assumes required keys (`target.database`, `target.table`, `target.engine`, 
+      `target.order_by`, `column_types`) exist in the configuration; missing keys will raise a `KeyError`.
+    - Complex ClickHouse Types: Nested ClickHouse types or parameters (such as `DateTime64(3, 'UTC')`) 
+      are not directly supported in the simple string-based `TYPE_MAPPING`.
+"""
+
 class ClickHouseDDLGenerator:
 
     def create_table_sql(self, config):

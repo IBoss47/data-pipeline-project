@@ -11,7 +11,7 @@ from datetime import datetime
     Outlets: s3://streamify/init
     
  Workflows :
-    init_platform (current) --> ...
+    init_platform (current) --> streamify_ingest_minio --> streamify_ingest_clickhouse --> streamify_dbt_process
 """
 
 INIT_ASSET = Asset("s3://streamify/init")

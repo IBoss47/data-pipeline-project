@@ -4,6 +4,23 @@ from services.loaders.minio_loader import MinioLoader
 from services.converters.parquet_converter import ParquetConverter
 import logging
 
+"""
+Script Purpose:
+    This service module orchestrates the ETL pipeline to extract raw CSV data, 
+    upload it to MinIO landing storage, and convert it into Parquet format.
+
+    Entry Point Function: run_minio_loader(dataset, date)
+
+Workflows :
+    load_config --> CSVExtractor (extractor) --> MinioLoader (load_data_to_minio) --> ParquetConverter (csv_to_parquet)
+
+Warnings & Edge Cases:
+    - High Memory Usage (In-Memory Processing): Extracting the entire CSV into a pandas Dataframe
+      in memory (`CSVExtractor`) can cause Out-Of-Memory (OOM) errors on large datasets.
+    - Idempotency & Overwrite Risk: Executing the pipeline multiple times for the same dataset and 
+      date partition will overwrite existing raw CSV and Parquet files in MinIO.
+"""
+
 logger = logging.getLogger(__name__)
 
 def run_minio_loader(dataset, date):

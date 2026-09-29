@@ -11,7 +11,9 @@ git switch poc/streamify-pipeline
 ```
 
 ## 2. Setup Environment Variables
-Create a `.env` file in the project root with the following contents:
+**Fast method:** Run `make setup-env` (or `make setup`) to automatically generate the file with default values.
+
+**Manual method:** Create a `.env` file in the project root with the following contents:
 
 ```env
 # --- ClickHouse & Storage Config ---
@@ -38,7 +40,9 @@ CLICKHOUSE_PASSWORD=
 ```
 
 ## 3. Setup Profiles
-Create a `profiles.yml` file in the project's dbt directory at `/Users/iboss/workspace/data-pipeline-project/dbt/profiles.yml` and add the following `streamify` profile configuration:
+**Fast method:** Run `make setup-dbt-profile` (or simply `make setup` to do both steps 2 and 3) to automatically generate the configuration.
+
+**Manual method:** Create a `profiles.yml` file in the project's dbt directory at `dbt/profiles.yml` and add the following `streamify` profile configuration:
 
 ```yaml
 streamify:
@@ -66,10 +70,11 @@ streamify:
 ```
 
 ## 4. Start Services
-Run Docker Compose to start the project services in detached mode:
+Use the Makefile to easily start the project services in detached mode:
 ```bash
-docker compose up -d
+make up
 ```
+*(Alternatively, you can run `docker compose up -d`)*
 
 ## 5. Setup Variable Connection
 Follow these steps to configure your variables and connections in the Airflow UI:

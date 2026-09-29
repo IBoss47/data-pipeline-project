@@ -14,6 +14,8 @@ This project is a Data Pipeline designed for analyzing music streaming behavior 
 
 For instructions on how to set up and run this project locally, please refer to the **[Project Setup Guide](setup-project.md)**.
 
+> **Tip:** You can use the provided `Makefile` to automate the setup process. Run `make help` in your terminal to see the available commands (e.g., `make setup`, `make up`).
+
 ## System Architecture
 
 ![System Architecture](images/stack.png)

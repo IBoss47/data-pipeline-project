@@ -85,3 +85,7 @@ Thumbs.db
 !.vscode/extensions.json
 *.swp
 *.swo
+
+target/
+dbt_packages/
+logs/
